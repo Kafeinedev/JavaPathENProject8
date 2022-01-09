@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 import org.junit.jupiter.api.*;
@@ -19,6 +20,11 @@ import tourGuide.user.User;
 import tripPricer.Provider;
 
 public class TestTourGuideService {
+
+	@BeforeAll
+	public static void init() {
+		Locale.setDefault(Locale.US);
+	}
 
 	@Test
 	public void getUserLocation() {

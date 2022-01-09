@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 import org.junit.jupiter.api.*;
@@ -21,6 +22,11 @@ import tourGuide.user.UserReward;
 
 public class TestRewardsService {
 
+	@BeforeAll
+	public static void init() {
+		Locale.setDefault(Locale.US);
+	}
+
 	@Test
 	public void userGetRewards() {
 		GpsUtil gpsUtil = new GpsUtil();
@@ -28,6 +34,8 @@ public class TestRewardsService {
 
 		InternalTestHelper.setInternalUserNumber(0);
 		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
+
+		System.out.println(Double.parseDouble(String.format("%.6f", -180.0)));
 
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 		Attraction attraction = gpsUtil.getAttractions().get(0);
