@@ -10,11 +10,16 @@ sourceCompatibility = '11'
 
 repositories {
 	mavenCentral()
+	flatDir {
+        dirs 'libs'
+    }
 }
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	
+	implementation files('libs/gpsUtil.jar')
 }
 
 test {
