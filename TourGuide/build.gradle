@@ -9,6 +9,12 @@ group = 'tourGuide'
 version = '1.0.0'
 sourceCompatibility = '11'
 
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
 repositories {
 	mavenCentral()
 }
@@ -20,9 +26,15 @@ repositories {
     }
 }
 
+ext {
+	set('springCloudVersion', "2021.0.0")
+}
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
     //implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation group: 'org.javamoney', name: 'moneta', version: '+'
@@ -34,6 +46,12 @@ dependencies {
     
     //testImplementation("junit:junit")
     //testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '+'
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
 }
 
 test {
