@@ -41,13 +41,12 @@ public class RewardsService {
 
 	public void calculateRewards(User user) {
 		List<VisitedLocation> userLocations = user.getVisitedLocations();
-		List<AttractionBean> attractions = gpsUtil.getAttractions();
+		List<Attraction> attractions = AttractionBean.toAttraction(gpsUtil.getAttractions());
 
 		for (VisitedLocation visitedLocation : userLocations) {
-			for (AttractionBean attraction : attractions) {
+			for (Attraction attraction : attractions) {
 				if (user.getUserRewards().stream()
-						.filter(r -> r.attraction.getAttractionName().equals(attraction.getAttractionName()))
-						.count() == 0) {
+						.filter(r -> r.attraction.attractionName.equals(attraction.attractionName)).count() == 0) {
 					if (nearAttraction(visitedLocation, attraction)) {
 						user.addUserReward(
 								new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)));
@@ -61,12 +60,12 @@ public class RewardsService {
 		return getDistance(attraction, location) > attractionProximityRange ? false : true;
 	}
 
-	private boolean nearAttraction(VisitedLocation visitedLocation, AttractionBean attraction) {
-		return getDistance(attraction.getLocation(), visitedLocation.location) > proximityBuffer ? false : true;
+	private boolean nearAttraction(VisitedLocation visitedLocation, Attraction attraction) {
+		return getDistance(attraction, visitedLocation.location) > proximityBuffer ? false : true;
 	}
 
-	private int getRewardPoints(AttractionBean attraction, User user) {
-		return rewardsCentral.getAttractionRewardPoints(attraction.getAttractionId(), user.getUserId());
+	private int getRewardPoints(Attraction attraction, User user) {
+		return rewardsCentral.getAttractionRewardPoints(attraction.attractionId, user.getUserId());
 	}
 
 	public double getDistance(Location loc1, Location loc2) {

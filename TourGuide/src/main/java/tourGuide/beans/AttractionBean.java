@@ -1,8 +1,10 @@
 package tourGuide.beans;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
-import gpsUtil.location.Location;
+import gpsUtil.location.Attraction;
 import lombok.Data;
 
 @Data
@@ -15,7 +17,15 @@ public class AttractionBean {
 	private String state;
 	private UUID attractionId;
 
-	public Location getLocation() {
-		return new Location(latitude, longitude);
+	public Attraction toAttraction() {
+		return new Attraction(attractionName, city, state, latitude, longitude);
+	}
+
+	public static List<Attraction> toAttraction(List<AttractionBean> toConvert) {
+		List<Attraction> attractions = new ArrayList<>(toConvert.size());
+		toConvert.forEach(attraction -> {
+			attractions.add(attraction.toAttraction());
+		});
+		return attractions;
 	}
 }
