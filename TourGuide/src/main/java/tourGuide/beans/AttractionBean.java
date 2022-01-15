@@ -2,6 +2,7 @@ package tourGuide.beans;
 
 import java.util.UUID;
 
+import gpsUtil.location.Location;
 import lombok.Data;
 
 @Data
@@ -13,4 +14,8 @@ public class AttractionBean {
 	private String city;
 	private String state;
 	private UUID attractionId;
+
+	public Location getLocation() {
+		return new Location(latitude, longitude);
+	}
 }
