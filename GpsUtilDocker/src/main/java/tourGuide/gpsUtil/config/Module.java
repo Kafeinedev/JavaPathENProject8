@@ -1,4 +1,4 @@
-package tourGuide.gpsUtil.docker.config;
+package tourGuide.gpsUtil.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

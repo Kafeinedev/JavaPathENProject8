@@ -1,10 +1,10 @@
-package tourGuide.gpsUtil.docker;
+package tourGuide.gpsUtil;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class GpsUtilDockerApplicationTests {
+class GpsUtilApplicationTests {
 
 	@Test
 	void contextLoads() {
