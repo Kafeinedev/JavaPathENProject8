@@ -6,8 +6,10 @@ import java.util.UUID;
 
 import gpsUtil.location.Attraction;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class AttractionBean {
 
 	private double longitude;

@@ -85,7 +85,7 @@ public class TourGuideService {
 
 		List<Provider> providers = tripPricer.getPrice(tripPricerApiKey, user.getUserId(),
 				user.getUserPreferences().getNumberOfAdults(), user.getUserPreferences().getNumberOfChildren(),
-				user.getUserPreferences().getTripDuration(), cumulatativeRewardPoints);// 6 params function
+				user.getUserPreferences().getTripDuration(), cumulatativeRewardPoints);
 
 		user.setTripDeals(providers);
 		return providers;
