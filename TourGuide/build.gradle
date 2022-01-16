@@ -41,7 +41,6 @@ dependencies {
 	implementation group: 'com.jsoniter', name: 'jsoniter', version: '+'
 	
     implementation files('libs/gpsUtil.jar')
-    implementation files('libs/RewardCentral.jar')
     implementation files('libs/TripPricer.jar')
     
     //testImplementation("junit:junit")
