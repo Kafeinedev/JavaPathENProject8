@@ -2,66 +2,79 @@ package tourGuide;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 import org.junit.jupiter.api.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
-import tourGuide.helper.InternalTestHelper;
+import tourGuide.beans.AttractionBean;
 import tourGuide.proxy.GpsUtilProxy;
+import tourGuide.proxy.RewardCentralProxy;
 import tourGuide.service.RewardsService;
-import tourGuide.service.TourGuideService;
 import tourGuide.user.User;
-import tourGuide.user.UserReward;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 public class TestRewardsService {
 
-	@Autowired
+	@Mock
+	private GpsUtilProxy mockGpsUtil;
+
+	@Mock
+	private RewardCentralProxy rewardsCentral;
+
+	@InjectMocks
 	private RewardsService rewardsService;
 
-	@Autowired
-	private GpsUtilProxy gpsUtil;
+	private User user;
+
+	private Attraction attraction;
+
+	@BeforeEach
+	public void setUp() {
+		attraction = new Attraction("name", "city", "state", 0.0d, 0.0d);
+		user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
+	}
 
 	@Test
-	public void userGetRewards() { // this test tour guide service
-		InternalTestHelper.setInternalUserNumber(0);
-		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
-
-		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
-		Attraction attraction = gpsUtil.getAttractions().get(0).toAttraction();
+	public void userGetRewards() {
 		user.addToVisitedLocations(new VisitedLocation(user.getUserId(), attraction, new Date()));
-		tourGuideService.trackUserLocation(user);
-		List<UserReward> userRewards = user.getUserRewards();
-		tourGuideService.tracker.stopTracking();
-		assertTrue(userRewards.size() == 1);
+		when(mockGpsUtil.getAttractions()).thenReturn(List.of(new AttractionBean(attraction)));
+
+		rewardsService.calculateRewards(user);
+
+		assertTrue(user.getUserRewards().size() == 1);
 	}
 
 	@Test
 	public void isWithinAttractionProximity() {
-		Attraction attraction = gpsUtil.getAttractions().get(0).toAttraction();
 		assertTrue(rewardsService.isWithinAttractionProximity(attraction, attraction));
 	}
 
-	@Disabled // Needs fixed - can throw ConcurrentModificationException
 	@Test
 	public void nearAllAttractions() {
-		rewardsService.setProximityBuffer(Integer.MAX_VALUE);
+		AttractionBean attractionBean1 = new AttractionBean(attraction);
+		AttractionBean attractionBean2 = new AttractionBean(attraction);
+		AttractionBean attractionBean3 = new AttractionBean(attraction);
+		attractionBean2.setAttractionName("number2");
+		attractionBean3.setAttractionName("name3");
+		user.addToVisitedLocations(new VisitedLocation(user.getUserId(), attractionBean1.toAttraction(), new Date()));
+		user.addToVisitedLocations(new VisitedLocation(user.getUserId(), attractionBean2.toAttraction(), new Date()));
+		user.addToVisitedLocations(new VisitedLocation(user.getUserId(), attractionBean3.toAttraction(), new Date()));
+		when(mockGpsUtil.getAttractions())
+				.thenReturn(List.of(attractionBean1, attractionBean2, attractionBean3, attractionBean1));
 
-		InternalTestHelper.setInternalUserNumber(1);
-		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
+		rewardsService.calculateRewards(user);
 
-		rewardsService.calculateRewards(tourGuideService.getAllUsers().get(0));
-		List<UserReward> userRewards = tourGuideService.getUserRewards(tourGuideService.getAllUsers().get(0));
-		tourGuideService.tracker.stopTracking();
-
-		assertEquals(gpsUtil.getAttractions().size(), userRewards.size());
+		assertEquals(3, user.getUserRewards().size());
 	}
 
 }

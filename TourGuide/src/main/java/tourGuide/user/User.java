@@ -71,7 +71,9 @@ public class User {
 	}
 
 	public void addUserReward(UserReward userReward) {
-		if (userRewards.stream().filter(r -> !r.attraction.attractionName.equals(userReward.attraction)).count() == 0) {
+		if (userRewards.stream().filter(r -> r.attraction.attractionName.equals(userReward.attraction.attractionName))
+				.count() == 0) {// previously r -> !r.attra... modified to be inline with rewardService
+								// this can probably be safely deleted as the check has already been done
 			userRewards.add(userReward);
 		}
 	}

@@ -17,6 +17,15 @@ public class AttractionBean {
 	private String state;
 	private UUID attractionId;
 
+	public AttractionBean(Attraction attraction) {
+		this.longitude = attraction.longitude;
+		this.latitude = attraction.latitude;
+		this.attractionName = attraction.attractionName;
+		this.city = attraction.city;
+		this.state = attraction.state;
+		this.attractionId = attraction.attractionId;
+	}
+
 	public Attraction toAttraction() {
 		return new Attraction(attractionName, city, state, latitude, longitude);
 	}

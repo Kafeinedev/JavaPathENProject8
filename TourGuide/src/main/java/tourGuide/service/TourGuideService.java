@@ -14,6 +14,7 @@ import java.util.stream.IntStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import gpsUtil.location.Attraction;
@@ -30,13 +31,17 @@ import tripPricer.TripPricer;
 
 @Service
 public class TourGuideService {
+
 	private Logger logger = LoggerFactory.getLogger(TourGuideService.class);
+
 	private GpsUtilProxy gpsUtil;
 	private final RewardsService rewardsService;
 	private final TripPricer tripPricer = new TripPricer();
+
 	public final Tracker tracker;
 	boolean testMode = true;
 
+	@Autowired
 	public TourGuideService(GpsUtilProxy gpsUtil, RewardsService rewardsService) {
 		this.gpsUtil = gpsUtil;
 		this.rewardsService = rewardsService;
@@ -51,7 +56,7 @@ public class TourGuideService {
 		addShutDownHook();
 	}
 
-	public List<UserReward> getUserRewards(User user) {
+	public List<UserReward> getUserRewards(User user) { // TODO: delete this method
 		return user.getUserRewards();
 	}
 
@@ -77,9 +82,11 @@ public class TourGuideService {
 
 	public List<Provider> getTripDeals(User user) {
 		int cumulatativeRewardPoints = user.getUserRewards().stream().mapToInt(i -> i.getRewardPoints()).sum();
+
 		List<Provider> providers = tripPricer.getPrice(tripPricerApiKey, user.getUserId(),
 				user.getUserPreferences().getNumberOfAdults(), user.getUserPreferences().getNumberOfChildren(),
-				user.getUserPreferences().getTripDuration(), cumulatativeRewardPoints);
+				user.getUserPreferences().getTripDuration(), cumulatativeRewardPoints);// 6 params function
+
 		user.setTripDeals(providers);
 		return providers;
 	}
@@ -93,7 +100,8 @@ public class TourGuideService {
 
 	public List<Attraction> getNearByAttractions(VisitedLocation visitedLocation) {
 		List<Attraction> nearbyAttractions = new ArrayList<>();
-		for (Attraction attraction : AttractionBean.toAttraction(gpsUtil.getAttractions())) {
+		for (Attraction attraction : AttractionBean.toAttraction(gpsUtil.getAttractions())) {// Maybe binary search ?
+																								// (pop count still low)
 			if (rewardsService.isWithinAttractionProximity(attraction, visitedLocation.location)) {
 				nearbyAttractions.add(attraction);
 			}
@@ -113,7 +121,7 @@ public class TourGuideService {
 
 	/**********************************************************************************
 	 * 
-	 * Methods Below: For Internal Testing
+	 * Methods and parameters below: for internal testing
 	 * 
 	 **********************************************************************************/
 	private static final String tripPricerApiKey = "test-server-api-key";

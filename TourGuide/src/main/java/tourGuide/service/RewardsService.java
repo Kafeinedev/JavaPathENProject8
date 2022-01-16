@@ -22,6 +22,7 @@ public class RewardsService {
 	private int defaultProximityBuffer = 10;
 	private int proximityBuffer = defaultProximityBuffer;
 	private int attractionProximityRange = 200;
+
 	private GpsUtilProxy gpsUtil;
 	private RewardCentralProxy rewardsCentral;
 
@@ -35,7 +36,8 @@ public class RewardsService {
 		this.proximityBuffer = proximityBuffer;
 	}
 
-	public void setDefaultProximityBuffer() {
+	public void setDefaultProximityBuffer() {// is this supposed to set proximityBuffer to default or is it supposed to
+												// set the actual default parameter ?
 		proximityBuffer = defaultProximityBuffer;
 	}
 
@@ -43,7 +45,7 @@ public class RewardsService {
 		List<VisitedLocation> userLocations = user.getVisitedLocations();
 		List<Attraction> attractions = AttractionBean.toAttraction(gpsUtil.getAttractions());
 
-		for (VisitedLocation visitedLocation : userLocations) {
+		for (VisitedLocation visitedLocation : userLocations) {// O(n²)
 			for (Attraction attraction : attractions) {
 				if (user.getUserRewards().stream()
 						.filter(r -> r.attraction.attractionName.equals(attraction.attractionName)).count() == 0) {
