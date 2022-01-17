@@ -1,6 +1,9 @@
 package tourGuide.service.impl;
 
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -61,6 +64,23 @@ public class DefaultRewardsService implements RewardsService {
 					}
 				}
 			}
+		}
+	}
+
+	@Override
+	public void highVolumeCalculateRewards(List<User> users) {
+		CountDownLatch countDownLatch = new CountDownLatch(users.size());
+		ExecutorService pool = Executors.newFixedThreadPool(1000);
+		users.forEach(u -> {
+			pool.execute(() -> {
+				calculateRewards(u);
+				countDownLatch.countDown();
+			});
+		});
+		try {
+			countDownLatch.await();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 	}
 

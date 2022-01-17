@@ -1,5 +1,7 @@
 package tourGuide.service;
 
+import java.util.List;
+
 import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import tourGuide.user.User;
@@ -15,5 +17,7 @@ public interface RewardsService {
 	boolean isWithinAttractionProximity(Attraction attraction, Location location);
 
 	double getDistance(Location loc1, Location loc2);
+
+	void highVolumeCalculateRewards(List<User> users);
 
 }
