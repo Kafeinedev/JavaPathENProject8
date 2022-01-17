@@ -9,6 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -122,6 +126,33 @@ public class DefaultTourGuideService implements TourGuideService {
 
 			return visitedLocation;
 		}
+	}
+
+	@Override
+	public Map<User, VisitedLocation> highVolumeTrackUserLocation(List<User> users) {
+		final int usersNumber = users.size();
+		Map<User, VisitedLocation> locations = new ConcurrentHashMap<>(usersNumber);
+		CountDownLatch countDownLatch = new CountDownLatch(usersNumber);
+		ExecutorService pool = Executors.newFixedThreadPool(1000);
+
+		users.forEach(u -> {
+			pool.execute(() -> {
+				try {
+					locations.put(u, trackUserLocation(u));
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally { // in case something unexpected happen we do not block the other threads.
+					countDownLatch.countDown();
+				}
+			});
+		});
+		try {
+			countDownLatch.await();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		return locations;
 	}
 
 	@Override

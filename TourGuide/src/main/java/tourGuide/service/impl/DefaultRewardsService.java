@@ -70,11 +70,16 @@ public class DefaultRewardsService implements RewardsService {
 	@Override
 	public void highVolumeCalculateRewards(List<User> users) {
 		CountDownLatch countDownLatch = new CountDownLatch(users.size());
-		ExecutorService pool = Executors.newFixedThreadPool(1000);
+		ExecutorService pool = Executors.newFixedThreadPool(1000); // could be cached
 		users.forEach(u -> {
 			pool.execute(() -> {
-				calculateRewards(u);
-				countDownLatch.countDown();
+				try {
+					calculateRewards(u);
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally { // in case something unexpected happen we do not block the other threads.
+					countDownLatch.countDown();
+				}
 			});
 		});
 		try {

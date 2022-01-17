@@ -1,6 +1,7 @@
 package tourGuide.service;
 
 import java.util.List;
+import java.util.Map;
 
 import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
@@ -25,5 +26,7 @@ public interface TourGuideService {
 	VisitedLocation trackUserLocation(User user);
 
 	List<Attraction> getNearByAttractions(VisitedLocation visitedLocation);
+
+	Map<User, VisitedLocation> highVolumeTrackUserLocation(List<User> users);
 
 }
