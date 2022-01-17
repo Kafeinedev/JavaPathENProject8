@@ -22,12 +22,12 @@ import tourGuide.beans.VisitedLocationBean;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.proxy.GpsUtilProxy;
 import tourGuide.service.RewardsService;
-import tourGuide.service.TourGuideService;
+import tourGuide.service.impl.DefaultTourGuideService;
 import tourGuide.user.User;
 import tripPricer.Provider;
 
 @ExtendWith(MockitoExtension.class)
-public class TestTourGuideService {
+public class TestDefaultTourGuideService {
 
 	@Mock
 	private RewardsService rewardsService;
@@ -36,16 +36,11 @@ public class TestTourGuideService {
 	private GpsUtilProxy gpsUtil;
 
 	@InjectMocks
-	private TourGuideService tourGuideService;
+	private DefaultTourGuideService tourGuideService;
 
 	@BeforeAll
 	public static void setUpBeforeAll() {
 		InternalTestHelper.setInternalUserNumber(0);
-	}
-
-	@AfterEach
-	public void cleanUp() {
-		tourGuideService.tracker.stopTracking();
 	}
 
 	@Test
@@ -84,8 +79,6 @@ public class TestTourGuideService {
 		tourGuideService.addUser(user2);
 
 		List<User> allUsers = tourGuideService.getAllUsers();
-
-		tourGuideService.tracker.stopTracking();
 
 		assertThat(allUsers.size()).isEqualTo(2);
 		assertTrue(allUsers.contains(user));

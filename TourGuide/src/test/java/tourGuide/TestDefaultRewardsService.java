@@ -19,11 +19,11 @@ import gpsUtil.location.VisitedLocation;
 import tourGuide.beans.AttractionBean;
 import tourGuide.proxy.GpsUtilProxy;
 import tourGuide.proxy.RewardCentralProxy;
-import tourGuide.service.RewardsService;
+import tourGuide.service.impl.DefaultRewardsService;
 import tourGuide.user.User;
 
 @ExtendWith(MockitoExtension.class)
-public class TestRewardsService {
+public class TestDefaultRewardsService {
 
 	@Mock
 	private GpsUtilProxy mockGpsUtil;
@@ -32,7 +32,7 @@ public class TestRewardsService {
 	private RewardCentralProxy rewardsCentral;
 
 	@InjectMocks
-	private RewardsService rewardsService;
+	private DefaultRewardsService rewardsService;
 
 	private User user;
 

@@ -16,8 +16,8 @@ import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.proxy.GpsUtilProxy;
-import tourGuide.service.RewardsService;
-import tourGuide.service.TourGuideService;
+import tourGuide.service.impl.DefaultRewardsService;
+import tourGuide.service.impl.DefaultTourGuideService;
 import tourGuide.user.User;
 
 @SpringBootTest
@@ -47,18 +47,17 @@ public class TestPerformance {
 	 */
 
 	@Autowired
-	private RewardsService rewardsService;
+	private DefaultRewardsService rewardsService;
 
 	@Autowired
 	private GpsUtilProxy gpsUtil;
 
-	@Disabled
 	@Test
 	public void highVolumeTrackLocation() {
 		// Users should be incremented up to 100,000, and test finishes within 15
 		// minutes
 		InternalTestHelper.setInternalUserNumber(100);
-		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
+		DefaultTourGuideService tourGuideService = new DefaultTourGuideService(gpsUtil, rewardsService);
 
 		List<User> allUsers = new ArrayList<>();
 		allUsers = tourGuideService.getAllUsers();
@@ -69,23 +68,21 @@ public class TestPerformance {
 			tourGuideService.trackUserLocation(user);
 		}
 		stopWatch.stop();
-		tourGuideService.tracker.stopTracking();
 
 		System.out.println("highVolumeTrackLocation: Time Elapsed: "
 				+ TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds.");
 		assertTrue(TimeUnit.MINUTES.toSeconds(15) >= TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
 	}
 
-	@Disabled
 	@Test
 	public void highVolumeGetRewards() {
 		// Users should be incremented up to 100,000, and test finishes within 20
 		// minutes
 		InternalTestHelper.setInternalUserNumber(100);
+		DefaultTourGuideService tourGuideService = new DefaultTourGuideService(gpsUtil, rewardsService);
+
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
-		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
-
 		Attraction attraction = gpsUtil.getAttractions().get(0).toAttraction();
 		List<User> allUsers = new ArrayList<>();
 		allUsers = tourGuideService.getAllUsers();
@@ -97,7 +94,6 @@ public class TestPerformance {
 			assertTrue(user.getUserRewards().size() > 0);
 		}
 		stopWatch.stop();
-		tourGuideService.tracker.stopTracking();
 
 		System.out.println("highVolumeGetRewards: Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime())
 				+ " seconds.");
