@@ -46,16 +46,18 @@ public class DefaultRewardsService implements RewardsService {
 
 	@Override
 	public void calculateRewards(User user) {
-		List<VisitedLocation> userLocations = user.getVisitedLocations();
-		List<Attraction> attractions = AttractionBean.toAttraction(gpsUtil.getAttractions());
+		synchronized (user) {
+			List<VisitedLocation> userLocations = user.getVisitedLocations();
+			List<Attraction> attractions = AttractionBean.toAttraction(gpsUtil.getAttractions());
 
-		for (VisitedLocation visitedLocation : userLocations) {// O(n²)
-			for (Attraction attraction : attractions) {
-				if (user.getUserRewards().stream()
-						.filter(r -> r.attraction.attractionName.equals(attraction.attractionName)).count() == 0) {
-					if (nearAttraction(visitedLocation, attraction)) {
-						user.addUserReward(
-								new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)));
+			for (VisitedLocation visitedLocation : userLocations) {// O(n²)
+				for (Attraction attraction : attractions) {
+					if (user.getUserRewards().stream()
+							.filter(r -> r.attraction.attractionName.equals(attraction.attractionName)).count() == 0) {
+						if (nearAttraction(visitedLocation, attraction)) {
+							user.addUserReward(
+									new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)));
+						}
 					}
 				}
 			}

@@ -61,52 +61,67 @@ public class DefaultTourGuideService implements TourGuideService {
 	}
 
 	@Override
-	public List<UserReward> getUserRewards(User user) { // TODO: delete this method
-		return user.getUserRewards();
+	public List<UserReward> getUserRewards(User user) {
+		synchronized (user) {
+			return user.getUserRewards();
+		}
 	}
 
 	@Override
 	public VisitedLocation getUserLocation(User user) {
-		VisitedLocation visitedLocation = (user.getVisitedLocations().size() > 0) ? user.getLastVisitedLocation()
-				: trackUserLocation(user);
-		return visitedLocation;
+		synchronized (user) {
+			VisitedLocation visitedLocation = (user.getVisitedLocations().size() > 0) ? user.getLastVisitedLocation()
+					: trackUserLocation(user);
+			return visitedLocation;
+		}
 	}
 
 	@Override
 	public User getUser(String userName) {
-		return internalUserMap.get(userName);
+		synchronized (internalUserMap) {
+			return internalUserMap.get(userName);
+		}
 	}
 
 	@Override
 	public List<User> getAllUsers() {
-		return internalUserMap.values().stream().collect(Collectors.toList());
+		synchronized (internalUserMap) {
+			return internalUserMap.values().stream().collect(Collectors.toList());
+		}
 	}
 
 	@Override
 	public void addUser(User user) {
-		if (!internalUserMap.containsKey(user.getUserName())) {
-			internalUserMap.put(user.getUserName(), user);
+		synchronized (internalUserMap) { // can be multithreaded
+			if (!internalUserMap.containsKey(user.getUserName())) {
+				internalUserMap.put(user.getUserName(), user);
+			}
 		}
 	}
 
 	@Override
 	public List<Provider> getTripDeals(User user) {
-		int cumulatativeRewardPoints = user.getUserRewards().stream().mapToInt(i -> i.getRewardPoints()).sum();
+		synchronized (user) {
+			int cumulatativeRewardPoints = user.getUserRewards().stream().mapToInt(i -> i.getRewardPoints()).sum();
 
-		List<Provider> providers = tripPricer.getPrice(tripPricerApiKey, user.getUserId(),
-				user.getUserPreferences().getNumberOfAdults(), user.getUserPreferences().getNumberOfChildren(),
-				user.getUserPreferences().getTripDuration(), cumulatativeRewardPoints);
+			List<Provider> providers = tripPricer.getPrice(tripPricerApiKey, user.getUserId(),
+					user.getUserPreferences().getNumberOfAdults(), user.getUserPreferences().getNumberOfChildren(),
+					user.getUserPreferences().getTripDuration(), cumulatativeRewardPoints);
 
-		user.setTripDeals(providers);
-		return providers;
+			user.setTripDeals(providers);
+			return providers;
+		}
 	}
 
 	@Override
 	public VisitedLocation trackUserLocation(User user) {
-		VisitedLocation visitedLocation = gpsUtil.getUserLocation(user.getUserId()).toVisitedLocation();
-		user.addToVisitedLocations(visitedLocation);
-		rewardsService.calculateRewards(user);
-		return visitedLocation;
+		synchronized (user) {
+			VisitedLocation visitedLocation = gpsUtil.getUserLocation(user.getUserId()).toVisitedLocation();
+			user.addToVisitedLocations(visitedLocation);
+			rewardsService.calculateRewards(user);
+
+			return visitedLocation;
+		}
 	}
 
 	@Override
