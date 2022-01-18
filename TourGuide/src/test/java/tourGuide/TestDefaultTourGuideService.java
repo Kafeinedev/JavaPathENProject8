@@ -17,13 +17,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
-import tourGuide.beans.LocationBean;
-import tourGuide.beans.VisitedLocationBean;
 import tourGuide.helper.InternalTestHelper;
+import tourGuide.model.LocationBean;
+import tourGuide.model.User;
+import tourGuide.model.VisitedLocationBean;
 import tourGuide.proxy.GpsUtilProxy;
 import tourGuide.service.RewardsService;
 import tourGuide.service.impl.DefaultTourGuideService;
-import tourGuide.user.User;
 import tripPricer.Provider;
 
 @ExtendWith(MockitoExtension.class)

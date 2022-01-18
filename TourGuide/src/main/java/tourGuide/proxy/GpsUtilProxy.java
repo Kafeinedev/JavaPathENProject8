@@ -7,8 +7,8 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import tourGuide.beans.AttractionBean;
-import tourGuide.beans.VisitedLocationBean;
+import tourGuide.model.AttractionBean;
+import tourGuide.model.VisitedLocationBean;
 
 @FeignClient(name = "microservice-gpsutil", url = "http://localhost:9001")
 public interface GpsUtilProxy {

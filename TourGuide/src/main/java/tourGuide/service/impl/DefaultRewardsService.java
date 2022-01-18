@@ -11,12 +11,12 @@ import org.springframework.stereotype.Service;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
-import tourGuide.beans.AttractionBean;
+import tourGuide.model.AttractionBean;
+import tourGuide.model.User;
+import tourGuide.model.UserReward;
 import tourGuide.proxy.GpsUtilProxy;
 import tourGuide.proxy.RewardCentralProxy;
 import tourGuide.service.RewardsService;
-import tourGuide.user.User;
-import tourGuide.user.UserReward;
 
 @Service
 public class DefaultRewardsService implements RewardsService {

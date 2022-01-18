@@ -15,10 +15,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
 import tourGuide.helper.InternalTestHelper;
+import tourGuide.model.User;
 import tourGuide.proxy.GpsUtilProxy;
 import tourGuide.service.impl.DefaultRewardsService;
 import tourGuide.service.impl.DefaultTourGuideService;
-import tourGuide.user.User;
 
 @SpringBootTest
 public class TestPerformance {

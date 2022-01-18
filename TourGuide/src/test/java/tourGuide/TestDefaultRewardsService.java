@@ -16,11 +16,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
-import tourGuide.beans.AttractionBean;
+import tourGuide.model.AttractionBean;
+import tourGuide.model.User;
 import tourGuide.proxy.GpsUtilProxy;
 import tourGuide.proxy.RewardCentralProxy;
 import tourGuide.service.impl.DefaultRewardsService;
-import tourGuide.user.User;
 
 @ExtendWith(MockitoExtension.class)
 public class TestDefaultRewardsService {

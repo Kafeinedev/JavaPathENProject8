@@ -1,4 +1,4 @@
-package tourGuide.beans;
+package tourGuide.model;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package tourGuide.beans;
+package tourGuide.model;
 
 import gpsUtil.location.Location;
 import lombok.Data;

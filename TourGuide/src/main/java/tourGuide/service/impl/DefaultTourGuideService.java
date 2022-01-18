@@ -23,14 +23,14 @@ import org.springframework.stereotype.Service;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
-import tourGuide.beans.AttractionBean;
 import tourGuide.helper.InternalTestHelper;
+import tourGuide.model.AttractionBean;
+import tourGuide.model.User;
+import tourGuide.model.UserReward;
 import tourGuide.proxy.GpsUtilProxy;
 import tourGuide.service.RewardsService;
 import tourGuide.service.TourGuideService;
 import tourGuide.tracker.Tracker;
-import tourGuide.user.User;
-import tourGuide.user.UserReward;
 import tripPricer.Provider;
 import tripPricer.TripPricer;
 
@@ -166,8 +166,7 @@ public class DefaultTourGuideService implements TourGuideService {
 	@Override
 	public List<Attraction> getNearByAttractions(VisitedLocation visitedLocation) {
 		List<Attraction> nearbyAttractions = new ArrayList<>();
-		for (Attraction attraction : AttractionBean.toAttraction(gpsUtil.getAttractions())) {// Maybe binary search ?
-																								// (pop count still low)
+		for (Attraction attraction : AttractionBean.toAttraction(gpsUtil.getAttractions())) {
 			if (rewardsService.isWithinAttractionProximity(attraction, visitedLocation.location)) {
 				nearbyAttractions.add(attraction);
 			}
