@@ -3,6 +3,7 @@ package tourGuide.service.impl;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,7 @@ import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.model.AttractionBean;
+import tourGuide.model.CloseAttractionBean;
 import tourGuide.model.User;
 import tourGuide.model.UserReward;
 import tourGuide.proxy.GpsUtilProxy;
@@ -93,9 +95,7 @@ public class DefaultTourGuideService implements TourGuideService {
 
 	@Override
 	public User getUser(String userName) {
-		synchronized (internalUserMap) {
-			return internalUserMap.get(userName);
-		}
+		return internalUserMap.get(userName);
 	}
 
 	@Override
@@ -175,6 +175,27 @@ public class DefaultTourGuideService implements TourGuideService {
 		return nearbyAttractions;
 	}
 
+	@Override
+	public List<CloseAttractionBean> getClosestAttractions(String username) {
+		User user = getUser(username);
+		Location userLocation = getUserLocation(user).location;
+		List<Attraction> attractions = AttractionBean.toAttraction(gpsUtil.getAttractions());
+		Comparator<Attraction> comp = (Attraction a, Attraction b) -> {
+			return Double.compare(rewardsService.getDistance(userLocation, a),
+					rewardsService.getDistance(userLocation, b));
+		};
+
+		attractions.sort(comp);
+
+		List<CloseAttractionBean> closestAttractions = new ArrayList<>();
+		attractions.subList(0, attractions.size() >= 4 ? 4 : attractions.size()).forEach(a -> {
+			closestAttractions
+					.add(new CloseAttractionBean(a.attractionName, new Location(a.latitude, a.longitude), userLocation,
+							rewardsService.getDistance(userLocation, a), rewardsService.getRewardPoints(a, user)));
+		});
+		return closestAttractions;
+	}
+
 	private void addShutDownHook() {
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override
@@ -192,6 +213,7 @@ public class DefaultTourGuideService implements TourGuideService {
 	private static final String tripPricerApiKey = "test-server-api-key";
 	// Database connection will be used for external users, but for testing purposes
 	// internal users are provided and stored in memory
+	// Access to database should always be done atomically
 	private final Map<String, User> internalUserMap = new ConcurrentHashMap<>();
 
 	private void initializeInternalUsers() {

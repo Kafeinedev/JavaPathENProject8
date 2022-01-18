@@ -8,6 +8,7 @@ import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 import tourGuide.model.User;
 import tourGuide.model.UserReward;
+import tourGuide.model.CloseAttractionBean;
 import tripPricer.Provider;
 
 public interface TourGuideService {
@@ -31,5 +32,7 @@ public interface TourGuideService {
 	List<Attraction> getNearByAttractions(VisitedLocation visitedLocation);
 
 	Map<User, VisitedLocation> highVolumeTrackUserLocation(List<User> users);
+
+	List<CloseAttractionBean> getClosestAttractions(String username);
 
 }

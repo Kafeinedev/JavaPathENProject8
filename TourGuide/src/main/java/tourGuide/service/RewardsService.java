@@ -20,4 +20,6 @@ public interface RewardsService {
 
 	void highVolumeCalculateRewards(List<User> users);
 
+	int getRewardPoints(Attraction attraction, User user);
+
 }

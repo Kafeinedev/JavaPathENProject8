@@ -98,8 +98,11 @@ public class DefaultRewardsService implements RewardsService {
 		return getDistance(attraction, visitedLocation.location) > proximityBuffer ? false : true;
 	}
 
-	private int getRewardPoints(Attraction attraction, User user) {
-		return rewardsCentral.getAttractionRewardPoints(attraction.attractionId, user.getUserId());
+	@Override
+	public int getRewardPoints(Attraction attraction, User user) {
+		synchronized (user) {
+			return rewardsCentral.getAttractionRewardPoints(attraction.attractionId, user.getUserId());
+		}
 	}
 
 	@Override
