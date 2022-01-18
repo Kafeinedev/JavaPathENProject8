@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -81,6 +80,18 @@ public class DefaultTourGuideService implements TourGuideService {
 	}
 
 	@Override
+	public Map<String, Location> getAllCurrentLocation() {
+		List<User> users = getAllUsers();
+		Map<String, Location> locations = new ConcurrentHashMap<>();
+
+		users.stream().parallel().forEach(u -> {
+			locations.put(u.getUserId().toString(), getUserLocation(u).location);
+		});
+
+		return locations;
+	}
+
+	@Override
 	public User getUser(String userName) {
 		synchronized (internalUserMap) {
 			return internalUserMap.get(userName);
@@ -89,18 +100,15 @@ public class DefaultTourGuideService implements TourGuideService {
 
 	@Override
 	public List<User> getAllUsers() {
-		synchronized (internalUserMap) {
-			return internalUserMap.values().stream().collect(Collectors.toList());
-		}
+		return internalUserMap.values().stream().collect(Collectors.toList());
 	}
 
 	@Override
 	public void addUser(User user) {
-		synchronized (internalUserMap) { // can be multithreaded
-			if (!internalUserMap.containsKey(user.getUserName())) {
-				internalUserMap.put(user.getUserName(), user);
-			}
+		if (!internalUserMap.containsKey(user.getUserName())) {
+			internalUserMap.put(user.getUserName(), user);
 		}
+
 	}
 
 	@Override
@@ -133,7 +141,7 @@ public class DefaultTourGuideService implements TourGuideService {
 		final int usersNumber = users.size();
 		Map<User, VisitedLocation> locations = new ConcurrentHashMap<>(usersNumber);
 		CountDownLatch countDownLatch = new CountDownLatch(usersNumber);
-		ExecutorService pool = Executors.newFixedThreadPool(1000);
+		ExecutorService pool = Executors.newFixedThreadPool(200);
 
 		users.forEach(u -> {
 			pool.execute(() -> {
@@ -185,7 +193,7 @@ public class DefaultTourGuideService implements TourGuideService {
 	private static final String tripPricerApiKey = "test-server-api-key";
 	// Database connection will be used for external users, but for testing purposes
 	// internal users are provided and stored in memory
-	private final Map<String, User> internalUserMap = new HashMap<>();
+	private final Map<String, User> internalUserMap = new ConcurrentHashMap<>();
 
 	private void initializeInternalUsers() {
 		IntStream.range(0, InternalTestHelper.getInternalUserNumber()).forEach(i -> {

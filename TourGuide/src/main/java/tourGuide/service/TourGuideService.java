@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import gpsUtil.location.Attraction;
+import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 import tourGuide.user.User;
 import tourGuide.user.UserReward;
@@ -14,6 +15,8 @@ public interface TourGuideService {
 	List<UserReward> getUserRewards(User user);
 
 	VisitedLocation getUserLocation(User user);
+
+	Map<String, Location> getAllCurrentLocation();
 
 	User getUser(String userName);
 
