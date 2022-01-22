@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
-import tourGuide.model.AttractionBean;
+import tourGuide.mapper.AttractionMapper;
 import tourGuide.model.User;
 import tourGuide.model.UserReward;
 import tourGuide.proxy.GpsUtilProxy;
@@ -51,7 +51,7 @@ public class DefaultRewardsService implements RewardsService {
 	public void calculateRewards(User user) {
 		synchronized (user) {
 			List<VisitedLocation> userLocations = user.getVisitedLocations();
-			List<Attraction> attractions = AttractionBean.toAttraction(gpsUtil.getAttractions());
+			List<Attraction> attractions = AttractionMapper.toAttraction(gpsUtil.getAttractions());
 
 			for (VisitedLocation visitedLocation : userLocations) {// O(n²)
 				for (Attraction attraction : attractions) {

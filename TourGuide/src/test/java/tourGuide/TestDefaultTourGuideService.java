@@ -16,8 +16,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import gpsUtil.location.Attraction;
+import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 import tourGuide.helper.InternalTestHelper;
+import tourGuide.model.AttractionBean;
+import tourGuide.model.CloseAttractionBean;
 import tourGuide.model.LocationBean;
 import tourGuide.model.User;
 import tourGuide.model.VisitedLocationBean;
@@ -94,13 +97,16 @@ public class TestDefaultTourGuideService {
 	// assertEquals(user.getUserId(), visitedLocation.userId);
 	// }
 
-	@Disabled // Not yet implemented
 	@Test
 	public void getNearbyAttractions() {
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
-		VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user);
+		tourGuideService.addUser(user);
+		user.addToVisitedLocations(new VisitedLocation(user.getUserId(), new Location(0.0, 0.0), new Date()));
+		AttractionBean attraction = new AttractionBean(new Attraction("close", "city", "state", 0.0, 0.0));
+		when(gpsUtil.getAttractions())
+				.thenReturn(List.of(attraction, attraction, attraction, attraction, attraction, attraction));
 
-		List<Attraction> attractions = tourGuideService.getNearByAttractions(visitedLocation);
+		List<CloseAttractionBean> attractions = tourGuideService.getClosestAttractions(user.getUserName());
 
 		assertEquals(5, attractions.size());
 	}

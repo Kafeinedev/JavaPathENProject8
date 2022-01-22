@@ -25,7 +25,7 @@ import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 import tourGuide.helper.InternalTestHelper;
-import tourGuide.model.AttractionBean;
+import tourGuide.mapper.AttractionMapper;
 import tourGuide.model.CloseAttractionBean;
 import tourGuide.model.User;
 import tourGuide.model.UserReward;
@@ -166,7 +166,7 @@ public class DefaultTourGuideService implements TourGuideService {
 	@Override
 	public List<Attraction> getNearByAttractions(VisitedLocation visitedLocation) {
 		List<Attraction> nearbyAttractions = new ArrayList<>();
-		for (Attraction attraction : AttractionBean.toAttraction(gpsUtil.getAttractions())) {
+		for (Attraction attraction : AttractionMapper.toAttraction(gpsUtil.getAttractions())) {
 			if (rewardsService.isWithinAttractionProximity(attraction, visitedLocation.location)) {
 				nearbyAttractions.add(attraction);
 			}
@@ -179,7 +179,7 @@ public class DefaultTourGuideService implements TourGuideService {
 	public List<CloseAttractionBean> getClosestAttractions(String username) {
 		User user = getUser(username);
 		Location userLocation = getUserLocation(user).location;
-		List<Attraction> attractions = AttractionBean.toAttraction(gpsUtil.getAttractions());
+		List<Attraction> attractions = AttractionMapper.toAttraction(gpsUtil.getAttractions());
 		Comparator<Attraction> comp = (Attraction a, Attraction b) -> {
 			return Double.compare(rewardsService.getDistance(userLocation, a),
 					rewardsService.getDistance(userLocation, b));
@@ -188,7 +188,7 @@ public class DefaultTourGuideService implements TourGuideService {
 		attractions.sort(comp);
 
 		List<CloseAttractionBean> closestAttractions = new ArrayList<>();
-		attractions.subList(0, attractions.size() >= 4 ? 4 : attractions.size()).forEach(a -> {
+		attractions.subList(0, attractions.size() >= 5 ? 5 : attractions.size()).forEach(a -> {
 			closestAttractions
 					.add(new CloseAttractionBean(a.attractionName, new Location(a.latitude, a.longitude), userLocation,
 							rewardsService.getDistance(userLocation, a), rewardsService.getRewardPoints(a, user)));
