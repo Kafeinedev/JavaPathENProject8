@@ -2,7 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.6.2'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-	//id 'jacoco'
+	id 'jacoco'
 }
 
 group = 'tourGuide'
@@ -13,10 +13,6 @@ configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
-}
-
-repositories {
-	mavenCentral()
 }
 
 repositories {
@@ -36,15 +32,11 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    //implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation group: 'org.javamoney', name: 'moneta', version: '+'
 	implementation group: 'com.jsoniter', name: 'jsoniter', version: '+'
 	
     implementation files('libs/gpsUtil.jar')
     implementation files('libs/TripPricer.jar')
-    
-    //testImplementation("junit:junit")
-    //testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '+'
 }
 
 dependencyManagement {
@@ -55,8 +47,14 @@ dependencyManagement {
 
 test {
 	useJUnitPlatform()
+	finalizedBy jacocoTestReport
 }
-/* //TODO: Add jacoco
+
+jacocoTestReport {
+    dependsOn test
+}
+
+
 jacoco {
     toolVersion = "+"
 }
@@ -65,22 +63,18 @@ jacocoTestReport {
     reports {
         xml.required = true
         csv.required = false
-        html.destination file("${buildDir}/jacocoHtml")
+        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
     }
 }
-
-test.finalizedBy jacocoTestReport
-check.dependsOn jacocoTestCoverageVerification
 
 jacocoTestCoverageVerification {
-  violationRules {
-    rule {
-      limit {
-        counter = 'LINE'
-        value = 'COVEREDRATIO'
-        minimum = 0.5
-      }
+    violationRules {
+        rule {
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.5
+            }
+        }
     }
-  }
 }
-*/

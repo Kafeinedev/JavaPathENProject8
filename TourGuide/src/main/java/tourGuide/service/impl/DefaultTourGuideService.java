@@ -19,6 +19,7 @@ import java.util.stream.IntStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import gpsUtil.location.Attraction;
@@ -47,10 +48,10 @@ public class DefaultTourGuideService implements TourGuideService {
 	private ExecutorService pool = Executors.newFixedThreadPool(200);
 
 	public final Tracker tracker;
-	boolean testMode = true;
 
 	@Autowired
-	public DefaultTourGuideService(GpsUtilProxy gpsUtil, RewardsService rewardsService) {
+	public DefaultTourGuideService(GpsUtilProxy gpsUtil, RewardsService rewardsService,
+			@Value("${testmode}") boolean testMode, @Value("${tracking}") boolean tracking) {
 		this.gpsUtil = gpsUtil;
 		this.rewardsService = rewardsService;
 
@@ -59,10 +60,13 @@ public class DefaultTourGuideService implements TourGuideService {
 			logger.debug("Initializing users");
 			initializeInternalUsers();
 			logger.debug("Finished initializing users");
-			tracker = null; // no need to track user while testing
-		} else {
+		}
+
+		if (tracking) {
 			tracker = new Tracker(this);
 			addShutDownHook();
+		} else {
+			tracker = null;
 		}
 	}
 

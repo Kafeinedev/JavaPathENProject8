@@ -13,7 +13,6 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -40,12 +39,16 @@ public class TestDefaultTourGuideService {
 	@Mock
 	private GpsUtilProxy gpsUtil;
 
-	@InjectMocks
 	private DefaultTourGuideService tourGuideService;
 
 	@BeforeAll
 	public static void setUpBeforeAll() {
 		InternalTestHelper.setInternalUserNumber(0);
+	}
+
+	@BeforeEach
+	public void setUp() {
+		tourGuideService = new DefaultTourGuideService(gpsUtil, rewardsService, true, false);
 	}
 
 	@Test
@@ -58,6 +61,32 @@ public class TestDefaultTourGuideService {
 
 		assertThat(user.getLastVisitedLocation()).isEqualTo(visitedLocation);
 		assertTrue(visitedLocation.userId.equals(user.getUserId()));
+	}
+
+	@Test
+	public void getAllUsersLocation() {
+		User user1 = new User(UUID.randomUUID(), "jon1", "000", "jon@tourGuide.com");
+		User user2 = new User(UUID.randomUUID(), "jon2", "000", "jon@tourGuide.com");
+		User user3 = new User(UUID.randomUUID(), "jon3", "000", "jon@tourGuide.com");
+		User user4 = new User(UUID.randomUUID(), "jon4", "000", "jon@tourGuide.com");
+		tourGuideService.addUser(user1);
+		tourGuideService.addUser(user2);
+		tourGuideService.addUser(user3);
+		tourGuideService.addUser(user4);
+		LocationBean location = new LocationBean(0.0, 0.0);
+		when(gpsUtil.getUserLocation(any(UUID.class)))
+				.thenReturn(new VisitedLocationBean(user1.getUserId(), location, new Date()))
+				.thenReturn(new VisitedLocationBean(user2.getUserId(), location, new Date()))
+				.thenReturn(new VisitedLocationBean(user3.getUserId(), location, new Date()))
+				.thenReturn(new VisitedLocationBean(user4.getUserId(), location, new Date()));
+
+		Map<String, Location> test = tourGuideService.getAllCurrentLocation();
+
+		assertThat(test.size()).isEqualTo(4);
+		assertTrue(test.containsKey(user1.getUserId().toString()));
+		assertTrue(test.containsKey(user2.getUserId().toString()));
+		assertTrue(test.containsKey(user3.getUserId().toString()));
+		assertTrue(test.containsKey(user4.getUserId().toString()));
 	}
 
 	@Test
@@ -121,7 +150,7 @@ public class TestDefaultTourGuideService {
 		Map<User, VisitedLocation> test = tourGuideService.highVolumeTrackUserLocation(tourGuideService.getAllUsers());
 
 		assertThat(test.size()).isEqualTo(4);
-		assertTrue(test.containsKey(user1)); // as highVolume is multithreaded and mockGpsUtil is not the values
+		assertTrue(test.containsKey(user1)); // as highVolume is multithreaded the values
 												// associated to the keys are not necessarly correct
 		assertTrue(test.containsKey(user2));
 		assertTrue(test.containsKey(user3));

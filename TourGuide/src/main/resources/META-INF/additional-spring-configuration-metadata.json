@@ -1,0 +1,12 @@
+{"properties": [
+  {
+    "name": "testmode",
+    "type": "java.lang.String",
+    "description": "A description for 'testmode'"
+  },
+  {
+    "name": "tracking",
+    "type": "java.lang.String",
+    "description": "A description for 'tracking'"
+  }
+]}

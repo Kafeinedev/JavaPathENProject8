@@ -58,7 +58,7 @@ public class TestPerformance {
 		// Users should be incremented up to 100,000, and test finishes within 15
 		// minutes
 		InternalTestHelper.setInternalUserNumber(100000);
-		DefaultTourGuideService tourGuideService = new DefaultTourGuideService(gpsUtil, rewardsService);
+		DefaultTourGuideService tourGuideService = new DefaultTourGuideService(gpsUtil, rewardsService, true, false);
 
 		List<User> allUsers = new ArrayList<>();
 		allUsers = tourGuideService.getAllUsers();
@@ -81,7 +81,7 @@ public class TestPerformance {
 		// Users should be incremented up to 100,000, and test finishes within 20
 		// minutes
 		InternalTestHelper.setInternalUserNumber(100000);
-		DefaultTourGuideService tourGuideService = new DefaultTourGuideService(gpsUtil, rewardsService);
+		DefaultTourGuideService tourGuideService = new DefaultTourGuideService(gpsUtil, rewardsService, true, false);
 
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();

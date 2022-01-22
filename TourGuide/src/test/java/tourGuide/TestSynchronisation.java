@@ -14,7 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import tourGuide.service.RewardsService;
 import tourGuide.service.TourGuideService;
 
-@SpringBootTest
+@SpringBootTest(properties = { "testmode=true", "tracking=false" })
 class TestSynchronisation {
 
 	@Autowired
