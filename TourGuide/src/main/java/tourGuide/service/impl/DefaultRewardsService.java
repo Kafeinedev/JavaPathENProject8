@@ -26,6 +26,7 @@ public class DefaultRewardsService implements RewardsService {
 	private int defaultProximityBuffer = 10;
 	private int proximityBuffer = defaultProximityBuffer;
 	private int attractionProximityRange = 200;
+	private ExecutorService pool = Executors.newFixedThreadPool(200);
 
 	private GpsUtilProxy gpsUtil;
 	private RewardCentralProxy rewardsCentral;
@@ -70,7 +71,7 @@ public class DefaultRewardsService implements RewardsService {
 	@Override
 	public void highVolumeCalculateRewards(List<User> users) {
 		CountDownLatch countDownLatch = new CountDownLatch(users.size());
-		ExecutorService pool = Executors.newFixedThreadPool(200);
+
 		users.forEach(u -> {
 			pool.execute(() -> {
 				try {

@@ -44,6 +44,7 @@ public class DefaultTourGuideService implements TourGuideService {
 	private GpsUtilProxy gpsUtil;
 	private final RewardsService rewardsService;
 	private final TripPricer tripPricer = new TripPricer();
+	private ExecutorService pool = Executors.newFixedThreadPool(200);
 
 	public final Tracker tracker;
 	boolean testMode = true;
@@ -141,7 +142,6 @@ public class DefaultTourGuideService implements TourGuideService {
 		final int usersNumber = users.size();
 		Map<User, VisitedLocation> locations = new ConcurrentHashMap<>(usersNumber);
 		CountDownLatch countDownLatch = new CountDownLatch(usersNumber);
-		ExecutorService pool = Executors.newFixedThreadPool(200);
 
 		users.forEach(u -> {
 			pool.execute(() -> {

@@ -129,7 +129,7 @@ public class TestDefaultTourGuideService {
 	}
 
 	@Test
-	public void getNearbyAttractions() {
+	public void getClosestAttractions() {
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 		tourGuideService.addUser(user);
 		user.addToVisitedLocations(new VisitedLocation(user.getUserId(), new Location(0.0, 0.0), new Date()));
