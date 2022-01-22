@@ -55,6 +55,25 @@ public class TestDefaultRewardsService {
 	}
 
 	@Test
+	public void highVolumeCalculateReward() {
+		User user1 = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
+		User user2 = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
+		User user3 = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
+		user.addToVisitedLocations(new VisitedLocation(user.getUserId(), attraction, new Date()));
+		user1.addToVisitedLocations(new VisitedLocation(user.getUserId(), attraction, new Date()));
+		user2.addToVisitedLocations(new VisitedLocation(user.getUserId(), attraction, new Date()));
+		user3.addToVisitedLocations(new VisitedLocation(user.getUserId(), attraction, new Date()));
+		when(mockGpsUtil.getAttractions()).thenReturn(List.of(new AttractionBean(attraction)));
+
+		rewardsService.highVolumeCalculateRewards(List.of(user, user1, user2, user3));
+
+		assertTrue(user.getUserRewards().size() == 1);
+		assertTrue(user1.getUserRewards().size() == 1);
+		assertTrue(user2.getUserRewards().size() == 1);
+		assertTrue(user3.getUserRewards().size() == 1);
+	}
+
+	@Test
 	public void isWithinAttractionProximity() {
 		assertTrue(rewardsService.isWithinAttractionProximity(attraction, attraction));
 	}

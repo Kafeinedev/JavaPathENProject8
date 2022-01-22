@@ -4,9 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.any;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.junit.jupiter.api.*;
@@ -52,7 +54,7 @@ public class TestDefaultTourGuideService {
 		when(gpsUtil.getUserLocation(user.getUserId()))
 				.thenReturn(new VisitedLocationBean(user.getUserId(), new LocationBean(), new Date()));
 
-		VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user);
+		VisitedLocation visitedLocation = tourGuideService.getUserLocation(user);
 
 		assertThat(user.getLastVisitedLocation()).isEqualTo(visitedLocation);
 		assertTrue(visitedLocation.userId.equals(user.getUserId()));
@@ -88,14 +90,43 @@ public class TestDefaultTourGuideService {
 		assertTrue(allUsers.contains(user2));
 	}
 
-	// Test already done in getUserLocation()
-	// @Test
-	// public void trackUser() {
-	// User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
-	// VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user);
-	//
-	// assertEquals(user.getUserId(), visitedLocation.userId);
-	// }
+	@Test
+	public void trackUser() {
+		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
+		when(gpsUtil.getUserLocation(user.getUserId()))
+				.thenReturn(new VisitedLocationBean(user.getUserId(), new LocationBean(), new Date()));
+
+		VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user);
+
+		assertEquals(user.getUserId(), visitedLocation.userId);
+	}
+
+	@Test
+	public void highVolumeTrackUser() {
+		User user1 = new User(UUID.randomUUID(), "jon1", "000", "jon@tourGuide.com");
+		User user2 = new User(UUID.randomUUID(), "jon2", "000", "jon@tourGuide.com");
+		User user3 = new User(UUID.randomUUID(), "jon3", "000", "jon@tourGuide.com");
+		User user4 = new User(UUID.randomUUID(), "jon4", "000", "jon@tourGuide.com");
+		tourGuideService.addUser(user1);
+		tourGuideService.addUser(user2);
+		tourGuideService.addUser(user3);
+		tourGuideService.addUser(user4);
+		LocationBean location = new LocationBean(0.0, 0.0);
+		when(gpsUtil.getUserLocation(any(UUID.class)))
+				.thenReturn(new VisitedLocationBean(user1.getUserId(), location, new Date()))
+				.thenReturn(new VisitedLocationBean(user2.getUserId(), location, new Date()))
+				.thenReturn(new VisitedLocationBean(user3.getUserId(), location, new Date()))
+				.thenReturn(new VisitedLocationBean(user4.getUserId(), location, new Date()));
+
+		Map<User, VisitedLocation> test = tourGuideService.highVolumeTrackUserLocation(tourGuideService.getAllUsers());
+
+		assertThat(test.size()).isEqualTo(4);
+		assertTrue(test.containsKey(user1)); // as highVolume is multithreaded and mockGpsUtil is not the values
+												// associated to the keys are not necessarly correct
+		assertTrue(test.containsKey(user2));
+		assertTrue(test.containsKey(user3));
+		assertTrue(test.containsKey(user4));
+	}
 
 	@Test
 	public void getNearbyAttractions() {
