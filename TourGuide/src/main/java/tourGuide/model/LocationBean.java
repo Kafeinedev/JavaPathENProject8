@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/*
+ * Small data class for allowing the use of feign for transfer of location data from microservice
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

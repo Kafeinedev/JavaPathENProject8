@@ -20,7 +20,7 @@ import tourGuide.proxy.GpsUtilProxy;
 import tourGuide.service.impl.DefaultRewardsService;
 import tourGuide.service.impl.DefaultTourGuideService;
 
-@SpringBootTest
+@SpringBootTest(properties = { "testmode=true", "tracking=false" })
 public class TestPerformance {
 
 	/*

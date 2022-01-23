@@ -6,6 +6,9 @@ import gpsUtil.location.Attraction;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/*
+ * Small data class for allowing the use of feign for transfer of attraction data from microservice
+ */
 @Data
 @NoArgsConstructor
 public class AttractionBean {

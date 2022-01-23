@@ -24,7 +24,6 @@ class TestSynchronisation {
 	private RewardsService rewardsService;
 
 	// Trying to induce a memory race
-	// this test is designed for a 4 core cpu
 	// this test will run for one hour
 	@Test
 	@Disabled

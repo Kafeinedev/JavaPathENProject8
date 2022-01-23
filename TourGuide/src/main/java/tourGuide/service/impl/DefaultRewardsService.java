@@ -43,8 +43,7 @@ public class DefaultRewardsService implements RewardsService {
 	}
 
 	@Override
-	public void setDefaultProximityBuffer() {// is this supposed to set proximityBuffer to default or is it supposed to
-												// set the actual default parameter ?
+	public void setDefaultProximityBuffer() {
 		proximityBuffer = defaultProximityBuffer;
 	}
 

@@ -9,6 +9,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(name = "microservice-rewardcentral", url = "http://localhost:9002")
 public interface RewardCentralProxy {
 
+	/**
+	 * Gets the attraction reward points.
+	 *
+	 * @param attractionId the attraction id
+	 * @param userId       the user id
+	 * @return the rewards points
+	 */
 	@GetMapping("/getAttractionRewardPoints")
 	public int getAttractionRewardPoints(@RequestParam(name = "attractionId") UUID attractionId,
 			@RequestParam(name = "userId") UUID userId);
