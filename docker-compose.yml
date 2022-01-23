@@ -1,0 +1,21 @@
+version : '2'
+services:
+    gpsutil:
+        image: gpsutil
+        restart: always
+
+    rewardcentral:
+        image: rewardcentral
+        restart: always
+
+    tourguide:
+        depends_on:
+            - gpsutil
+            - rewardcentral
+        image: tourguide
+        ports:
+            - "9000:9000"
+        restart: always
+        environment:
+            URL_GPSUTIL: http://gpsutil:9001
+            URL_REWARDCENTRAL: http://rewardcentral:9002

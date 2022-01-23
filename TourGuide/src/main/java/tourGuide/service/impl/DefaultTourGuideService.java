@@ -152,7 +152,7 @@ public class DefaultTourGuideService implements TourGuideService {
 				try {
 					locations.put(u, trackUserLocation(u));
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.error("Exception thrown in highVolumeTrackUserLocation", e);
 				} finally { // in case something unexpected happen we do not block the other threads.
 					countDownLatch.countDown();
 				}

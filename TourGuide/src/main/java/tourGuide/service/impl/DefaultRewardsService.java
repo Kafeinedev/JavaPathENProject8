@@ -5,6 +5,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,8 @@ import tourGuide.service.RewardsService;
 @Service
 public class DefaultRewardsService implements RewardsService {
 	private static final double STATUTE_MILES_PER_NAUTICAL_MILE = 1.15077945;
+
+	private Logger logger = LoggerFactory.getLogger(DefaultRewardsService.class);
 
 	// proximity in miles
 	private int defaultProximityBuffer = 10;
@@ -53,7 +57,7 @@ public class DefaultRewardsService implements RewardsService {
 			List<VisitedLocation> userLocations = user.getVisitedLocations();
 			List<Attraction> attractions = AttractionMapper.toAttraction(gpsUtil.getAttractions());
 
-			for (VisitedLocation visitedLocation : userLocations) {// O(n²)
+			for (VisitedLocation visitedLocation : userLocations) {
 				for (Attraction attraction : attractions) {
 					if (user.getUserRewards().stream()
 							.filter(r -> r.attraction.attractionName.equals(attraction.attractionName)).count() == 0) {
@@ -76,7 +80,7 @@ public class DefaultRewardsService implements RewardsService {
 				try {
 					calculateRewards(u);
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.error("Exception thrown in highVolumeCalculateRewards", e);
 				} finally { // in case something unexpected happen we do not block the other threads.
 					countDownLatch.countDown();
 				}
