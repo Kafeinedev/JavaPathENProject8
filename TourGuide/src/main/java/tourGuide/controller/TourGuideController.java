@@ -3,6 +3,8 @@ package tourGuide.controller;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,6 +21,8 @@ import tripPricer.Provider;
 @RestController
 public class TourGuideController {
 
+	private Logger logger = LoggerFactory.getLogger(TourGuideController.class);
+
 	@Autowired
 	TourGuideService tourGuideService;
 
@@ -29,6 +33,8 @@ public class TourGuideController {
 	 */
 	@RequestMapping("/")
 	public String index() {
+		logger.info("Get request @ /");
+
 		return "Greetings from TourGuide!";
 	}
 
@@ -41,6 +47,8 @@ public class TourGuideController {
 	 */
 	@RequestMapping("/getLocation")
 	public Location getLocation(@RequestParam String userName) {
+		logger.info("Get request @ /getLocation username : " + userName);
+
 		VisitedLocation visitedLocation = tourGuideService.getUserLocation(getUser(userName));
 		return visitedLocation.location;
 	}
@@ -54,6 +62,8 @@ public class TourGuideController {
 	 */
 	@RequestMapping("/getNearbyAttractions")
 	public List<CloseAttractionBean> getNearbyAttractions(@RequestParam String userName) {
+		logger.info("Get request @ /getNearbyAttractions username : " + userName);
+
 		return tourGuideService.getClosestAttractions(userName);
 	}
 
@@ -66,6 +76,8 @@ public class TourGuideController {
 	 */
 	@RequestMapping("/getRewards")
 	public List<UserReward> getRewards(@RequestParam String userName) {
+		logger.info("Get request @ /getRewards username : " + userName);
+
 		return tourGuideService.getUserRewards(getUser(userName));
 	}
 
@@ -77,6 +89,8 @@ public class TourGuideController {
 	 */
 	@RequestMapping("/getAllCurrentLocations")
 	public Map<String, Location> getAllCurrentLocations() {
+		logger.info("Get request @ /getAllCurrentLocations");
+
 		return tourGuideService.getAllCurrentLocation();
 	}
 
@@ -89,6 +103,8 @@ public class TourGuideController {
 	 */
 	@RequestMapping("/getTripDeals")
 	public List<Provider> getTripDeals(@RequestParam String userName) {
+		logger.info("Get request @ /getTripDeals username : " + userName);
+
 		return tourGuideService.getTripDeals(getUser(userName));
 	}
 
