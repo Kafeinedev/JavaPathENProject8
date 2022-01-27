@@ -1,6 +1,6 @@
 # TourGuide
 
-Ensemble of application
+Application for finding touristic attractions, and giving rewards to users according to the attraction they visited.
 
 ## Getting Started
 
